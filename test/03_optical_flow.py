@@ -7,13 +7,35 @@ OPTICAL FLOW
 import os
 import cv2
 import json
+import shutil
+import pandas as pd
 import numpy as np
 
 
 # Define parameters
-video_file = os.path.join('C:\Users\Smith\Videos\pepe\GOPR0305.MP4')
-# video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
+# video_file = os.path.join('C:\Users\Smith\Videos\pepe\GOPR0305.MP4')
+video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
+folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
+
 json_filename = os.path.join(os.path.dirname(video_file), 'eye_detection', 'eyes_detection.json')
+root = os.path.join(os.getcwd(), '..')
+params_file = os.path.join(root, 'params', 'params.json')
+print(params_file)
+# END OF PARAMETERS - DO NOT TOUCH FROM HERE!
+
+# Check and create folder
+if not os.path.exists(folder_output):
+    os.makedirs(folder_output)
+else:
+    shutil.rmtree(folder_output)
+    os.makedirs(folder_output)
+
+# Load params file
+with open(params_file, 'r') as json_file:
+    jf = json.load(json_file)
+    fps = jf['camera']['fps']
+    opt_flow_csv = jf['opt_flow']['csv_file']
+
 
 # Load ROI
 with open(json_filename, 'r') as json_file:
@@ -26,6 +48,7 @@ with open(json_filename, 'r') as json_file:
     roi_y_max = jf['left_eye']['y_max']
 
     frame_start = jf['frame_start']
+
 
 # params for ShiTomasi corner detection
 feature_params = dict(maxCorners=100,
@@ -64,6 +87,9 @@ p0 = cv2.goodFeaturesToTrack(roi_ff_gray, mask=None, **feature_params)
 # Create a mask image for drawing purposes
 mask = np.zeros_like(first_frame)
 
+# Initialize a position vector
+position = []
+
 while cap.isOpened():
     # cap = cv2.VideoCapture(video_file)
     ret, frame = cap.read()
@@ -94,10 +120,12 @@ while cap.isOpened():
         img = cv2.add(frame, mask)
 
         cv2.imshow('frame', img)
+        position.append([cap.get(cv2.CAP_PROP_POS_FRAMES), a, b])
 
     # If there is no frame, finish
     else:
         break
+
     # Wait for exit command
     k = cv2.waitKey(30) & 0xff == ord('q')
     if k == 27:
@@ -109,3 +137,8 @@ while cap.isOpened():
 
 cv2.destroyAllWindows()
 cap.release()
+
+position_df = pd.DataFrame(position, columns=['frame', 'x_pos', 'y_pos'])
+position_df['x_vel'] = position_df['x_pos'].diff() * fps
+position_df['y_vel'] = position_df['y_pos'].diff() * fps
+position_df.to_csv(os.path.join(folder_output, opt_flow_csv))

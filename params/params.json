@@ -1,4 +1,10 @@
 {
   "dataset_folder": "...",
-  "eye_detection_json" : "eyes_detection.json"
+  "eye_detection_json" : "eyes_detection.json",
+  "camera": {
+    "fps": 120
+  },
+  "opt_flow": {
+    "csv_file": "optical_flow.csv"
+  }
 }
