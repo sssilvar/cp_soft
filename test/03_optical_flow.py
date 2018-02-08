@@ -70,16 +70,16 @@ cap.set(cv2.CAP_PROP_POS_FRAMES, frame_start + 100)
 print(cap.get(cv2.CAP_PROP_POS_FRAMES))
 
 print('[  INFO  ] Checking first frame')
-# Take first frame and find corners in it: first_frame
-# Extract ROI and replace: first frame
-# Convert ROI to gray scale: roi_ff_gray
-# Define a point of start: p0
 ret = False
 while not ret:
     print(cap.get(cv2.CAP_PROP_POS_FRAMES))
     print(ret)
     ret, first_frame = cap.read()
 
+# Take first frame and find corners in it: first_frame
+# Extract ROI and replace: first frame
+# Convert ROI to gray scale: roi_ff_gray
+# Define a point of start: p0
 first_frame = first_frame[roi_y_min: roi_y_max, roi_x_min: roi_x_max]
 roi_ff_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
 p0 = cv2.goodFeaturesToTrack(roi_ff_gray, mask=None, **feature_params)
@@ -101,7 +101,7 @@ while cap.isOpened():
         # Extract ROI and replace it in :frame
         frame = frame[roi_y_min: roi_y_max, roi_x_min: roi_x_max]
 
-        # Convert to gray: frame gray
+        # Convert to gray: frame grTypeError: 889 is not JSON serializableTypeError: 889 is not JSON serializableay
         roi_frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # calculate optical flow
