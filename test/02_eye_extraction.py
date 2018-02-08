@@ -8,13 +8,13 @@ EYE EXTRACTION
 import os
 import cv2
 import json
+import numpy as np
 import shutil
 import matplotlib.pyplot as plt
 
 
 # Define parameters
-video_file = os.path.join('C:\Users\Smith\Videos\pepe\GOPR0305.MP4')
-# video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
+video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
 folder_output = os.path.join(os.path.dirname(video_file), 'eye_detection')
 
 root = os.path.join(os.getcwd(), '..')
@@ -38,6 +38,7 @@ with open(os.path.join(root, 'params', 'params.json')) as json_file:
     jf = json.load(json_file)
     eyes_file = jf['eye_detection_json']
 
+data = {}
 # Start processing!
 while cap.isOpened():
     print('[  OK  ] Checking for frames')
@@ -53,10 +54,10 @@ while cap.isOpened():
 
         for i, (x, y, w, h) in enumerate(eyes):
             print(i)
-            xt.append(x)
-            yt.append(y)
-            wt.append(w)
-            ht.append(h)
+            xt.append(int(x))
+            yt.append(int(y))
+            wt.append(int(w))
+            ht.append(int(h))
 
             frame = cv2.rectangle(frame, (x, y), (x + h, y + w), (0, 255, 0), 2)
 
@@ -64,7 +65,8 @@ while cap.isOpened():
             # 1. Eye vertical separation less than 20% of the video height
             # 2. Ordinate (y) length greater than 20% of the video height
             conditions = i == 1 and \
-                         abs(yt[0] - yt[1]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT) < yt[0] + ht[0] and \
+                         abs(yt[0] - yt[1]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT) and \
+                         yt[0] + ht[0] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT) and \
                          yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
             if conditions:
@@ -123,24 +125,29 @@ while cap.isOpened():
                         data['right_eye']['x_min']: data['right_eye']['x_max']  # Y ROI boundary
                     ]
 
-    try:
-            # Visualise image
-            frame_start = cap.get(cv2.CAP_PROP_POS_FRAMES)
-            data['frame_start'] = frame_start
-            print('[  INFO  ] Eyes found at frame: %d' % frame_start)
-            print('[  SUCCESS  ] showing')
+    if data != {}:
+        try:
+                # Visualise image
+                frame_start = cap.get(cv2.CAP_PROP_POS_FRAMES)
+                data['frame_start'] = frame_start
+                print('[  INFO  ] Eyes found at frame: %d' % frame_start)
+                print('[  SUCCESS  ] showing')
 
-            cv2.imwrite(os.path.join(folder_output, 'left_eye.jpg'), left_eye)
-            cv2.imwrite(os.path.join(folder_output, 'right_eye.jpg'), right_eye)
+                cv2.imwrite(os.path.join(folder_output, 'left_eye.jpg'), left_eye)
+                cv2.imwrite(os.path.join(folder_output, 'right_eye.jpg'), right_eye)
 
-            # Save coordinates file (see params.json)
-            with open(os.path.join(folder_output, eyes_file), 'w') as file_out:
-                json.dump(data, file_out)
+                # Save coordinates file (see params.json)
+                try:
+                    with open(os.path.join(folder_output, eyes_file), 'w') as file_out:
+                        json.dump(data, file_out, sort_keys=True, indent=4)
+                except Exception:
+                    print('[  ERROR  ] Cannot save JSON file')
+                    print(Exception)
 
-            # Exit
-            break
-    except Exception:
-        print('[  ERROR  ] Cannot show or eyes not detected')
+                # Exit
+                break
+        except TypeError as e:
+            print('[  ERROR  ] Cannot show or eyes not detected:\n %s' % e.strerror)
 
     # Check for interruption
     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -165,4 +172,4 @@ plt.axis('on')
 plt.grid('on')
 plt.title('Left eye')
 
-plt.show()
+plt.show(block=False)

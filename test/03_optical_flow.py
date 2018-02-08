@@ -13,7 +13,6 @@ import numpy as np
 
 
 # Define parameters
-# video_file = os.path.join('C:\Users\Smith\Videos\pepe\GOPR0305.MP4')
 video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
 folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
 
@@ -42,10 +41,11 @@ with open(json_filename, 'r') as json_file:
     jf = json.load(json_file)
 
     # Load boundaries
-    roi_x_min = jf['left_eye']['x_min']
-    roi_x_max = jf['left_eye']['x_max']
-    roi_y_min = jf['left_eye']['y_min']
-    roi_y_max = jf['left_eye']['y_max']
+    eye = 'right_eye'
+    roi_x_min = jf[eye]['x_min']
+    roi_x_max = jf[eye]['x_max']
+    roi_y_min = jf[eye]['y_min']
+    roi_y_max = jf[eye]['y_max']
 
     frame_start = jf['frame_start']
 
