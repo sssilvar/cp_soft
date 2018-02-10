@@ -11,7 +11,6 @@ import shutil
 import pandas as pd
 import numpy as np
 
-
 # Define parameters
 video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
 folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
@@ -35,7 +34,6 @@ with open(params_file, 'r') as json_file:
     fps = jf['camera']['fps']
     opt_flow_csv = jf['opt_flow']['csv_file']
 
-
 # Load ROI
 with open(json_filename, 'r') as json_file:
     jf = json.load(json_file)
@@ -48,7 +46,6 @@ with open(json_filename, 'r') as json_file:
     roi_y_max = jf[eye]['y_max']
 
     frame_start = jf['frame_start']
-
 
 # params for ShiTomasi corner detection
 feature_params = dict(maxCorners=100,
@@ -112,11 +109,14 @@ while cap.isOpened():
         good_old = p0[st == 1]
 
         # draw the tracks
+        n_features = 0
         for i, (new, old) in enumerate(zip(good_new, good_old)):
             a, b = new.ravel()
             c, d = old.ravel()
             mask = cv2.line(mask, (a, b), (c, d), color[i].tolist(), 2)
             frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
+            n_features += 1
+
         img = cv2.add(frame, mask)
 
         cv2.imshow('frame', img)
@@ -141,4 +141,9 @@ cap.release()
 position_df = pd.DataFrame(position, columns=['frame', 'x_pos', 'y_pos'])
 position_df['x_vel'] = position_df['x_pos'].diff() * fps
 position_df['y_vel'] = position_df['y_pos'].diff() * fps
+
+print('[  OK  ] Saving file %s' % opt_flow_csv)
 position_df.to_csv(os.path.join(folder_output, opt_flow_csv))
+
+print('Done!\n\t Total frames processed: %d\n\t Total features extracted: %d'
+      % (position_df['frame'].max() - frame_start, n_features))
