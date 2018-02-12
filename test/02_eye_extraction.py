@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 
 
 # Define parameters
-video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
+# video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
+video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'eye_detection')
 
 root = os.path.join(os.getcwd(), '..')
@@ -172,4 +173,4 @@ plt.axis('on')
 plt.grid('on')
 plt.title('Left eye')
 
-plt.show(block=False)
+plt.show()

@@ -1,6 +1,8 @@
 """
 OPTICAL FLOW
 @Description: This program calculates the optical flow for a region of interest (ROI)
+:param video_file:
+:param eye: 'right_eye' or 'left_eye'
 
 """
 
@@ -12,8 +14,10 @@ import pandas as pd
 import numpy as np
 
 # Define parameters
-video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
+# video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
+video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
+eye = 'left_eye'
 
 json_filename = os.path.join(os.path.dirname(video_file), 'eye_detection', 'eyes_detection.json')
 root = os.path.join(os.getcwd(), '..')
@@ -39,7 +43,6 @@ with open(json_filename, 'r') as json_file:
     jf = json.load(json_file)
 
     # Load boundaries
-    eye = 'right_eye'
     roi_x_min = jf[eye]['x_min']
     roi_x_max = jf[eye]['x_max']
     roi_y_min = jf[eye]['y_min']
@@ -84,16 +87,19 @@ p0 = cv2.goodFeaturesToTrack(roi_ff_gray, mask=None, **feature_params)
 # Create a mask image for drawing purposes
 mask = np.zeros_like(first_frame)
 
-# Initialize a position vector
-position = []
+# Define a feature vector
+features = []
 
 while cap.isOpened():
     # cap = cv2.VideoCapture(video_file)
     ret, frame = cap.read()
+
+    # Get current frame
+    current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+    print('Loading frame: %d' % current_frame)
+
     # Start optical flow
     if ret:
-        # Get current frame
-        print('Loading frame: %d' % cap.get(cv2.CAP_PROP_POS_FRAMES))
 
         # Extract ROI and replace it in :frame
         frame = frame[roi_y_min: roi_y_max, roi_x_min: roi_x_max]
@@ -105,24 +111,29 @@ while cap.isOpened():
         p1, st, err = cv2.calcOpticalFlowPyrLK(roi_ff_gray, roi_frame_gray, p0, None, **lk_params)
 
         # Select good points
-        good_new = p1[st == 1]
-        good_old = p0[st == 1]
+        try:
+            good_new = p1[st == 1]
+            good_old = p0[st == 1]
 
-        # draw the tracks
-        n_features = 0
-        for i, (new, old) in enumerate(zip(good_new, good_old)):
-            a, b = new.ravel()
-            c, d = old.ravel()
-            mask = cv2.line(mask, (a, b), (c, d), color[i].tolist(), 2)
-            frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
-            n_features += 1
+            # draw the tracks
+            n_features = 0
+            for i, (new, old) in enumerate(zip(good_new, good_old)):
+                a, b = new.ravel()
+                c, d = old.ravel()
+                mask = cv2.line(mask, (a, b), (c, d), color[i].tolist(), 2)
+                frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
+                n_features += 1
+                features.append([current_frame, i, a, b])
+        except TypeError:
+            print('Skipping frame (no features found)')
 
         img = cv2.add(frame, mask)
 
         cv2.imshow('frame', img)
-        position.append([cap.get(cv2.CAP_PROP_POS_FRAMES), a, b])
 
     # If there is no frame, finish
+    elif current_frame < cap.get(cv2.CAP_PROP_FRAME_COUNT):
+        pass
     else:
         break
 
@@ -138,12 +149,12 @@ while cap.isOpened():
 cv2.destroyAllWindows()
 cap.release()
 
-position_df = pd.DataFrame(position, columns=['frame', 'x_pos', 'y_pos'])
+position_df = pd.DataFrame(features, columns=['frame', 'feature_id', 'x_pos', 'y_pos'])
 position_df['x_vel'] = position_df['x_pos'].diff() * fps
 position_df['y_vel'] = position_df['y_pos'].diff() * fps
 
 print('[  OK  ] Saving file %s' % opt_flow_csv)
-position_df.to_csv(os.path.join(folder_output, opt_flow_csv))
+position_df.to_csv(os.path.join(folder_output, eye + '_' + opt_flow_csv))
 
 print('Done!\n\t Total frames processed: %d\n\t Total features extracted: %d'
-      % (position_df['frame'].max() - frame_start, n_features))
+      % (position_df['frame'].max() - frame_start, position_df['feature_id'].max()))

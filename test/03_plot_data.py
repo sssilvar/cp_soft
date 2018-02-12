@@ -5,7 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Define parameters
-video_file = os.path.join(os.getcwd(), 'media', 'GOPR0216.mp4')
+# video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
+video_file = '/run/media/sssilvar/DATA/Users/Smith/Videos/pepe/GOPR0305.MP4'
 opt_flow_folder = os.path.join(os.path.dirname(video_file), 'optical_flow')
 
 json_filename = os.path.join(os.path.dirname(video_file), 'eye_detection', 'eyes_detection.json')
