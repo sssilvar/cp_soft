@@ -4,7 +4,7 @@ import cv2
 
 # Define parameters
 video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
-video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
+# video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
 
 # Create a capture object (from video)
 cap = cv2.VideoCapture(video_file)

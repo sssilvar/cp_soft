@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 # Define parameters
 video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
-# video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
+# video_file = '/run/media/sssilvar/DATA_2T/Mi Bella/Dataset_solovideos/All/PC/GoPro/GOPR0258.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'eye_detection')
 
 root = os.path.join(os.getcwd(), '..')
@@ -65,10 +65,21 @@ while cap.isOpened():
             # Conditions for eye selection
             # 1. Eye vertical separation less than 20% of the video height
             # 2. Ordinate (y) length greater than 20% of the video height
-            conditions = i == 1 and \
-                         abs(yt[0] - yt[1]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT) and \
-                         yt[0] + ht[0] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT) and \
-                         yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+            if i == 1:
+                condition_1 = True
+                condition_2 = abs(yt[0] - yt[1]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+                condition_3 = yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+            elif i>= 1:
+                condition_1 = True
+                condition_2 = abs(yt[1] - yt[2]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+                condition_3 = yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+                print('More than two eyes')
+                del xt[0], yt[0], wt[0], ht[0]
+            else:
+                condition_1 = condition_2 = condition_3 = False
+
+            conditions = condition_1 and condition_2 and condition_3
 
             if conditions:
                 print('[  OK  ] Extracting ROI')
@@ -173,4 +184,4 @@ plt.axis('on')
 plt.grid('on')
 plt.title('Left eye')
 
-plt.show()
+plt.show(block=False)
