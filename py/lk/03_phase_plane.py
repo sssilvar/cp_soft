@@ -4,6 +4,8 @@ from scipy import stats
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import LogNorm
 
 # Define parameters
 # video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
@@ -44,38 +46,105 @@ def get_opt_flow_data(video_file, eye):
 
 if __name__ == '__main__':
     # Eye
-    eye = 'right'
+    eyes = ['left', 'right']
 
     # Set filename per each subject
     video_cp = os.path.join(root, 'test', 'media', '1', 'video.mp4')
     video_nc = os.path.join(root, 'test', 'media', '0', 'video.mp4')
 
-    # Load velocity and acceleration into a DataFrame
-    df_cp = get_opt_flow_data(video_cp, eye)
-    df_nc = get_opt_flow_data(video_nc, eye)
-
-    # Create grid
-    hist_nc, x_edges, y_edges = np.histogram2d(df_nc['x_vel'].fillna(0), df_nc['x_accel'].fillna(0))
-    var_nc = hist_nc.var()
-
-    hist_cp, x_edges, y_edges = np.histogram2d(df_cp['x_vel'].fillna(0), df_cp['x_accel'].fillna(0))
-    var_cp = hist_cp.var()
-
-    # Plot the results
     plt.figure()
-    plt.suptitle('%s Eye Analysis' % eye.title(), fontsize=24)
-    plt.subplot(1, 2, 1)
-    plt.title('Control Patient (var = %d)' % var_nc)
-    plt.scatter(df_nc['x_vel'], df_nc['x_accel'])
-    plt.xlabel('Velocity')
-    plt.ylabel('Acceleration')
-    plt.ylim([-2e6, 2e6])
 
-    plt.subplot(1, 2, 2)
-    plt.title('CP Patient (var = %d)' % var_cp)
-    plt.scatter(df_cp['x_vel'], df_cp['x_accel'], color='blue')
-    plt.xlabel('Velocity')
-    plt.ylabel('Acceleration')
-    plt.ylim([-2e6, 2e6])
+    for i, eye in enumerate(eyes):
+        # Load velocity and acceleration into a DataFrame
+        df_cp = get_opt_flow_data(video_cp, eye)
+        df_nc = get_opt_flow_data(video_nc, eye)
+
+        # Create grid
+        hist_nc, x_edges, y_edges = np.histogram2d(df_nc['x_vel'].fillna(0), df_nc['x_accel'].fillna(0), normed=True, bins=20)
+        var_nc = hist_nc.var()
+
+        hist_cp, x_edges, y_edges = np.histogram2d(df_cp['x_vel'].fillna(0), df_cp['x_accel'].fillna(0), normed=True, bins=20)
+        var_cp = hist_cp.var()
+
+        # Create velocity and acceleration vectors
+        vel_mag_cp = np.sqrt(df_nc['x_vel'] ** 2 + df_nc['y_vel'] ** 2).fillna(0)
+        accel_mag_cp = np.sqrt(df_nc['x_accel'] ** 2 + df_nc['y_accel'] ** 2).fillna(0)
+
+        vel_mag_nc = np.sqrt(df_cp['x_vel'] ** 2 + df_cp['y_vel'] ** 2).fillna(0)
+        accel_mag_nc = np.sqrt(df_cp['x_accel'] ** 2 + df_cp['y_accel'] ** 2).fillna(0)
+
+        # Plot the results
+        # plt.subplot(2, 2, 2*i+1)
+        # plt.scatter(vel_mag_nc, accel_mag_nc)
+        # if i == 0:
+        #     plt.title('Control Patient')
+        #     plt.ylabel('%s eye acceleration' % eye.title())
+        # elif i == 1:
+        #     plt.ylabel('%s eye acceleration' % eye.title())
+        #     plt.xlabel('Eye velocity')
+        # plt.ylim([-2e6, 2e6])
+        # plt.legend(('Var = %.2E' % var_nc,), loc='lower right')
+        # plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        #
+        # plt.subplot(2, 2, 2*(i+1))
+        # plt.scatter(vel_mag_cp, accel_mag_cp, color='blue')
+        # if i == 0:
+        #     plt.title('CP Patient')
+        # elif i == 1:
+        #     plt.xlabel('Eye velocity')
+        #
+        # plt.ylim([-2e6, 2e6])
+        # plt.legend(('Var = %.2E' % var_cp,), loc='lower right')
+        # plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+
+        # Plot histograms
+        bins = 25
+        normed = False
+
+        if i == 0:
+            f, axarr = plt.subplots(2, 2, sharex=True)
+            axarr[0, 0].set_title('Control Patient')
+            axarr[0, 0].legend(('Var = %.2E' % var_nc,), loc='lower right')
+            axarr[0, 0].set_ylabel('%s eye acceleration' % eye.title())
+            axarr[0, 0].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            axarr[0, 0].hist2d(vel_mag_nc, accel_mag_nc, bins=bins, norm=LogNorm(), normed=normed)
+
+            axarr[0, 1].set_title('CP Patient')
+            axarr[0, 1].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            axarr[0, 1].hist2d(vel_mag_cp, accel_mag_cp, bins=bins, norm=LogNorm(), normed=normed)
+        elif i == 1:
+            axarr[1, 0].set_ylabel('%s eye acceleration' % eye.title())
+            axarr[1, 0].set_xlabel('Velocity')
+            axarr[1, 0].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            axarr[1, 0].hist2d(vel_mag_nc, accel_mag_nc, bins=bins, norm=LogNorm(), normed=normed)
+
+            axarr[1, 1].set_xlabel('Velocity')
+            axarr[1, 1].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            axarr[1, 1].hist2d(vel_mag_cp, accel_mag_cp, bins=bins, norm=LogNorm(), normed=normed)
+
+        # if i == 0:
+        #     fig = plt.figure()
+        #     ax = fig.add_subplot(111, projection='3d')
+        #     x, y = np.random.rand(2, 100) * 4
+        #     hist, xedges, yedges = np.histogram2d(x, y, bins=4, range=[[0, 4], [0, 4]])
+        #
+        #     # Construct arrays for the anchor positions of the 16 bars.
+        #     # Note: np.meshgrid gives arrays in (ny, nx) so we use 'F' to flatten xpos,
+        #     # ypos in column-major order. For numpy >= 1.7, we could instead call meshgrid
+        #     # with indexing='ij'.
+        #     xpos, ypos = np.meshgrid(x_edges[:-1] + 0.25, y_edges[:-1] + 0.25)
+        #     xpos = xpos.flatten('F')
+        #     ypos = ypos.flatten('F')
+        #     zpos = np.zeros_like(xpos)
+        #
+        #     # Construct arrays with the dimensions for the 16 bars.
+        #     dx = 0.5 * np.ones_like(zpos)
+        #     dy = dx.copy()
+        #     dz = hist_nc.flatten()
+        #
+        #     ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color='b', zsort='average')
+        #
+        # elif i == 1:
+        #     pass
 
     plt.show()
