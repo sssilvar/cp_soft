@@ -4,13 +4,21 @@ import os
 # Define the root folder (DO NOT TOUCH)
 root = os.path.join(os.getcwd(), '..', '..')
 
+# Check operating System
+if os.name == 'nt':
+    python = os.path.normpath('C:/Users/' + os.environ['USERNAME'] + '/Anaconda2/python.exe')
+elif os.name == 'Linux':
+    python = 'python 2.7'
+else:
+    python = 'python'
+
 
 # MAIN FUNCTION
 if __name__ == '__main__':
     # Define the list of videos:
     video_files = [
-        '/home/sssilvar/Documents/Dataset/jpgonzalezh/test/NC/SMOOTH/GOPR0215.MP4',  # Control Video
-        '/home/sssilvar/Documents/Dataset/jpgonzalezh/test/CP/SMOOTH/GOPR0312.MP4'   # CP Video
+        'C:/Users/Smith/Downloads/temp/riie/NC/GOPR0215.MP4',  # Control Video
+        'C:/Users/Smith/Downloads/temp/riie/CP/GOPR0312.MP4'   # CP Video
     ]
 
     # =========================================
@@ -20,10 +28,10 @@ if __name__ == '__main__':
         video_file = os.path.normpath(video_file)
 
         # 1. Eyes detection
-        os.system('python2.7 01_eyes_detection.py %s' % video_file)
+        os.system(python + ' 01_eyes_detection.py %s' % video_file)
 
         # 2. Optical Flow Calculation
-        os.system('python2.7 02_optical_flow_hs.py %s' % video_file)
+        os.system(python + ' 02_optical_flow_hs.py %s' % video_file)
 
 # Plot results
-os.system('python2.7 03_phase_plane.py %s %s' % (video_files[0], video_files[1]))
+os.system(python + ' 03_phase_plane.py %s %s' % (video_files[0], video_files[1]))
