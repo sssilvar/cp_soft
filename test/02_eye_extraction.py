@@ -70,7 +70,7 @@ while cap.isOpened():
                 condition_1 = True
                 condition_2 = abs(yt[0] - yt[1]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
                 condition_3 = yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-            elif i>= 1:
+            elif i >= 1:
                 condition_1 = True
                 condition_2 = abs(yt[1] - yt[2]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
                 condition_3 = yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
