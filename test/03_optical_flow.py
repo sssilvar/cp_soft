@@ -14,8 +14,8 @@ import pandas as pd
 import numpy as np
 
 # Define parameters
-# video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
-video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
+video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
+# video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
 eye = 'left_eye'
 
@@ -152,6 +152,8 @@ cap.release()
 position_df = pd.DataFrame(features, columns=['frame', 'feature_id', 'x_pos', 'y_pos'])
 position_df['x_vel'] = position_df['x_pos'].diff() * fps
 position_df['y_vel'] = position_df['y_pos'].diff() * fps
+position_df['x_accel'] = position_df['x_vel'].diff() * fps
+position_df['y_accel'] = position_df['y_vel'].diff() * fps
 
 print('[  OK  ] Saving file %s' % opt_flow_csv)
 position_df.to_csv(os.path.join(folder_output, eye + '_' + opt_flow_csv))

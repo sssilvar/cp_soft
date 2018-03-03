@@ -1,0 +1,15 @@
+{
+    "frame_start": 1.0, 
+    "left_eye": {
+        "x_max": 503, 
+        "x_min": 439, 
+        "y_max": 351, 
+        "y_min": 287
+    }, 
+    "right_eye": {
+        "x_max": 395, 
+        "x_min": 331, 
+        "y_max": 350, 
+        "y_min": 286
+    }
+}
