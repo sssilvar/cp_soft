@@ -1,10 +1,9 @@
-import os
-import sys
-import cv2
 import json
-import numpy as np
+import os
 import shutil
-import matplotlib.pyplot as plt
+import sys
+
+import cv2
 
 # Define the root folder
 root = os.path.join(os.getcwd(), '..', '..')

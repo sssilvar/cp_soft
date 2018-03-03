@@ -6,16 +6,15 @@ OPTICAL FLOW
 
 """
 
-import os
-import cv2
 import json
-import shutil
-import pandas as pd
-import numpy as np
-
-# Set root folder
+import os
 import sys
 
+import cv2
+import numpy as np
+import pandas as pd
+
+# Set root folder
 root = os.path.join(os.getcwd(), '..', '..')
 
 
@@ -152,7 +151,7 @@ def opt_flow(video_file, eye, visualize=True):
 
             if visualize:
                 img = cv2.add(frame, mask)
-                cv2.imshow('frame', img)
+                cv2.imshow(eye, img)
 
         # If there is no frame, finish
         elif current_frame < cap.get(cv2.CAP_PROP_FRAME_COUNT):
