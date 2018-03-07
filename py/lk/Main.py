@@ -34,4 +34,4 @@ if __name__ == '__main__':
         os.system(python + ' 02_optical_flow_hs.py %s' % video_file)
 
 # Plot results
-os.system(python + ' 03_phase_plane.py %s %s' % (video_files[0], video_files[1]))
+os.system(python + ' 03_phase_plane_all_video.py %s %s' % (video_files[0], video_files[1]))
