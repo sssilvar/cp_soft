@@ -32,9 +32,10 @@ def get_opt_flow_data(video_file, eye):
 
     # Set Optical flow folder directory
     opt_flow_folder = os.path.join(os.path.dirname(video_file), 'optical_flow')
+    print(opt_flow_folder)
 
     params_file = os.path.join(root, 'params', 'params.json')
-    print('Loading parameters file: %s' % params_file)
+    # print('Loading parameters file: %s' % params_file)
 
     # Load params file
     with open(params_file, 'r') as json_file:
@@ -65,10 +66,8 @@ if __name__ == '__main__':
     eyes = ['left', 'right']
 
     # Set filename per each subject
-    video_cp = os.path.join(root, 'test', 'media', '1', 'video.mp4')
-    video_nc = os.path.join(root, 'test', 'media', '0', 'video.mp4')
-    # video_nc = sys.argv[1]
-    # video_cp = sys.argv[2]
+    video_nc = sys.argv[1]
+    video_cp = sys.argv[2]
 
     plt.figure()
 

@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 
 
 # Define parameters
-video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
-# video_file = '/run/media/sssilvar/DATA_2T/Mi Bella/Dataset_solovideos/All/PC/GoPro/GOPR0258.MP4'
+# video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
+video_file = 'C:/Users/sssilvar/Videos/cp_soft/smooth/GOPR0229.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'eye_detection')
 
 root = os.path.join(os.getcwd(), '..')
@@ -72,7 +72,7 @@ while cap.isOpened():
                 condition_3 = yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
             elif i >= 1:
                 condition_1 = True
-                condition_2 = abs(yt[1] - yt[2]) < 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+                condition_2 = abs(yt[1] - yt[2]) < 0.1 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
                 condition_3 = yt[1] + ht[1] > 0.2 * cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
                 print('More than two eyes')
                 del xt[0], yt[0], wt[0], ht[0]

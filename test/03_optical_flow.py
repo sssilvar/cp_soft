@@ -15,7 +15,7 @@ import numpy as np
 
 # Define parameters
 video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
-# video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
+video_file = '/home/sssilvar/Downloads/GOPR0322.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
 eye = 'left_eye'
 
