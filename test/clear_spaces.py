@@ -7,4 +7,5 @@ if __name__ == '__main__':
     for root, dirs, files in os.walk(workdir):
         for dir in dirs:
             if 'espacio_' in dir:
-                print(dir)
+                dir_to_delete = os.path.join(root, dir)
+                print(dir_to_delete)
