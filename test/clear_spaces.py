@@ -1,4 +1,5 @@
 import os
+import shutil
 
 
 if __name__ == '__main__':
@@ -9,4 +10,4 @@ if __name__ == '__main__':
             if 'espacio_' in dir:
                 dir_to_delete = os.path.join(root, dir)
                 print('[  WARNING  ] Deleting: ' + dir_to_delete)
-                os.rmdir(dir_to_delete)
+                shutil.rmtree(dir_to_delete)
