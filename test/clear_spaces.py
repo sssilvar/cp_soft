@@ -8,4 +8,5 @@ if __name__ == '__main__':
         for dir in dirs:
             if 'espacio_' in dir:
                 dir_to_delete = os.path.join(root, dir)
-                print(dir_to_delete)
+                print('[  WARNING  ] Deleting: ' + dir_to_delete)
+                os.rmdir(dir_to_delete)
