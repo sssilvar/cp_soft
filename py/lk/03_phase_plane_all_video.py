@@ -12,7 +12,7 @@ from matplotlib.colors import LogNorm
 # video_file = os.path.join(os.getcwd(), 'media', '1', 'video.mp4')
 
 # Define Root folder and set plot style
-root = os.path.join(os.getcwd(), '..', '..')
+root = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
 plt.style.use('ggplot')
 
 

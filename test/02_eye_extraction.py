@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 video_file = 'C:/Users/sssilvar/Videos/cp_soft/smooth/GOPR0229.MP4'
 folder_output = os.path.join(os.path.dirname(video_file), 'eye_detection')
 
-root = os.path.join(os.getcwd(), '..')
+root = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
 
 # Check and create folder
 if not os.path.exists(folder_output):

@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 # Set root folder
-root = os.path.join(os.getcwd(), '..', '..')
+root = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
 
 
 def check_folder(folder):

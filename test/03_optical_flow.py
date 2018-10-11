@@ -20,7 +20,7 @@ folder_output = os.path.join(os.path.dirname(video_file), 'optical_flow')
 eye = 'left_eye'
 
 json_filename = os.path.join(os.path.dirname(video_file), 'eye_detection', 'eyes_detection.json')
-root = os.path.join(os.getcwd(), '..')
+root = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
 params_file = os.path.join(root, 'params', 'params.json')
 print(params_file)
 # END OF PARAMETERS - DO NOT TOUCH FROM HERE!
